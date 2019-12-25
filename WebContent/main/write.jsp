@@ -64,6 +64,20 @@
 						<div id="phoneMessage"></div>
 					</div>
 				</div>
+				<div class="form-group row">
+					<label for="addr" class="col-sm-2 col-form-label">주소</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="addr" name="addr">
+						<div id="addrMessage"></div>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="gender" class="col-sm-2 col-form-label">성별</label>
+					<div class="col-sm-10">
+						<input type="checkbox" class="form-control" id="gender" name="gender">
+						<div id="phoneMessage"></div>
+					</div>
+				</div>
 				<input type="hidden" name="checkEmail" id="checkEmail" value="no" />
 				<!-- 해당값이 기본값(no)이면 안보내준다 -->
 			</form>
@@ -126,6 +140,21 @@
 								$("#phone").focus();
 								return;
 							}
+							
+							if ($("#addr").val().length == 0) {
+								$("#addr").addClass("is-invalid");
+								$("#addrMessage").html("<span class ='text-danger'>주소를 입력하세요.</span>");
+								$("#addr").focus();
+								return;
+							}
+							
+							if (!$("#gender").val()) {
+								$("#gender").addClass("is-invalid");
+								$("#genderMessage").html("<span class ='text-danger'>성별을 선택하세요.</span>");
+								$("#gender").focus();
+								return;
+							}
+							
 
 							if ($("#checkEmail").val() == "no") {
 								return;

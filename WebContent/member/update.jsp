@@ -5,12 +5,15 @@
 	request.setCharacterEncoding("utf-8");
 	String email = request.getParameter("email");
 	String name = request.getParameter("name");
+	String password = request.getParameter("password");
 	String phone = request.getParameter("phone");
+	String addr = request.getParameter("addr");
+	int gender = Integer.parseInt(request.getParameter("gender"));
 	String regdate = request.getParameter("regdate");
 	String tempPage = request.getParameter("page");
 
 	MemberDao dao = MemberDao.getInstance();
-	MemberDto dto = new MemberDto(email, name, null, phone, regdate);
+	MemberDto dto = new MemberDto(email, name, password, phone, addr, gender, null);
 	boolean isSuccess = dao.update(dto);
 	if (isSuccess) {
 %>

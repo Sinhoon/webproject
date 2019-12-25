@@ -5,17 +5,21 @@ public class MemberDto {
 	private String name;
 	private String password;
 	private String phone;
+	private String addr;
+	private int gender;
 	private String regdate;
 	public MemberDto() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public MemberDto(String email, String name, String password, String phone, String regdate) {
+	public MemberDto(String email, String name, String password, String phone, String addr, int gender,	String regdate) {
 		super();
 		this.email = email;
 		this.name = name;
 		this.password = password;
 		this.phone = phone;
+		this.addr = addr;
+		this.gender = gender;
 		this.regdate = regdate;
 	}
 	public String getEmail() {
@@ -42,12 +46,25 @@ public class MemberDto {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	public String getAddr() {
+		return addr;
+	}
+	public void setAddr(String addr) {
+		this.addr = addr;
+	}
+	public int getGender() {
+		return gender;
+	}
+	public void setGender(int gender) {
+		this.gender = gender;
+	}
 	public String getRegdate() {
 		return regdate;
 	}
 	public void setRegdate(String regdate) {
 		this.regdate = regdate;
 	}
+	
 	
 }
 

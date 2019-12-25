@@ -9,9 +9,12 @@
 	String name = request.getParameter("name");
 	String password = request.getParameter("password");
 	String phone = request.getParameter("phone");
+	String addr = request.getParameter("addr");
+	int gender = Integer.parseInt(request.getParameter("gender"));
+	String regdate = request.getParameter("regdate");
 	
 	MemberDao dao = MemberDao.getInstance();
-	MemberDto dto = new MemberDto(email, name, password, phone, null);
+	MemberDto dto = new MemberDto(email, name, password, phone, addr, gender, null);
 	boolean isSuccess = dao.insert(dto);
 	
 	if(isSuccess){

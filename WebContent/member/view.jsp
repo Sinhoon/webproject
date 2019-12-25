@@ -76,6 +76,23 @@
 					</div>
 				</div>
 				<div class="form-group row">
+					<label for="addr" class="col-sm-2 col-form-label">주소</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="addr" name="addr">
+						<div id="addrMessage"></div>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="gender" class="col-sm-2 col-form-label">성별</label>
+					<div class="col-sm-10">
+						남자<input type="radio" class="form-control" id="gender" name="gender" value="male"
+							style="font-size:10px; width:15px; height:15px"> 
+						여자<input type="radio" class="form-c	ontrol" id="gender" name="gender" value="female"
+							style="font-size:10px; width:15px; height:15px">
+						<div id="genderMessage"></div>
+					</div>
+				</div>
+				<div class="form-group row">
 					<label for="regdate" class="col-sm-2 col-form-label">가입날짜</label>
 					<div class="col-sm-10">
 						<input type="text" class="form-control" id="regdate" name="regdate" readonly="readonly" value="<%=regdate%>">
@@ -143,6 +160,20 @@
 								$("#phone").addClass("is-invalid");
 								$("#phoneMessage").html("<span class ='text-danger'>휴대폰번호를 입력하세요.</span>");
 								$("#phone").focus();
+								return;
+							}
+							
+							if ($("#addr").val().length == 0) {
+								$("#addr").addClass("is-invalid");
+								$("#addrMessage").html("<span class ='text-danger'>주소를 입력하세요.</span>");
+								$("#addr").focus();
+								return;
+							}
+							
+							if (!$("#gender").val()) {
+								$("#gender").addClass("is-invalid");
+								$("#genderMessage").html("<span class ='text-danger'>성별을 선택하세요.</span>");
+								$("#gender").focus();
 								return;
 							}
 

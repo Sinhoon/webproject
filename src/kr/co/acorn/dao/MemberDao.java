@@ -32,7 +32,7 @@ public class MemberDao {
 		try {
 			con = ConnLocator.getConnection();
 			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT COUNT(m_email) ");
+			sql.append("SELECT COUNT(email) ");
 			sql.append("FROM member ");
 
 			pstmt = con.prepareStatement(sql.toString());
@@ -74,9 +74,9 @@ public class MemberDao {
 		try {
 			con = ConnLocator.getConnection();
 			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT m_email ");
+			sql.append("SELECT email ");
 			sql.append("FROM member ");
-			sql.append("WHERE m_email = ? ");
+			sql.append("WHERE email = ? ");
 
 			pstmt = con.prepareStatement(sql.toString());
 			int index = 0;
