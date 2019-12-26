@@ -222,7 +222,7 @@ public class MemberDao {
 			con = ConnLocator.getConnection();
 			StringBuffer sql = new StringBuffer();
 			sql.append("INSERT INTO member(email, name, pwd, phone, addr, gender, regdate) ");
-			sql.append("VALUES(?, ?, ?, ?, ?, ?, CURDATE()) ");
+			sql.append("VALUES(?, ?, password(?), ?, ?, ?, CURDATE()) ");
 
 			pstmt = con.prepareStatement(sql.toString());
 			int index = 0;
@@ -330,33 +330,54 @@ public class MemberDao {
 		return isSuccess;
 	}
 
-	public MemberDto getMember(MemberDto dto) { MemberDto MemberDto = null;
-  
-  Connection con = null; PreparedStatement pstmt = null; ResultSet rs = null;
-  
-  try { con = ConnLocator.getConnection(); StringBuffer sql = new
-  StringBuffer(); sql.
-  append("SELECT m_email, m_name, m_phone, date_format(m_regdate, '%Y/%m/%d') "
-  ); sql.append("FROM member ");
-  sql.append("WHERE m_email = ? AND m_pwd = PASSWORD(?) ");
-  
-  pstmt = con.prepareStatement(sql.toString()); int index = 0;
-  pstmt.setString(++index, dto.getEmail() ); pstmt.setString(++index,
-  dto.getPassword());
-  
-  rs = pstmt.executeQuery(); if (rs.next()) { index = 0; String email =
-  rs.getString(++index); String name = rs.getString(++index); String phone =
-  rs.getString(++index); String regdate = rs.getString(++index); MemberDto =
-  new MemberDto(email, name, null, phone, regdate); } } catch (SQLException e)
-  { // TODO Auto-generated catch block e.printStackTrace(); } finally { try {
-  if (rs != null) rs.close(); if (pstmt != null) pstmt.close(); if (con !=
-  null) con.close();
-  
-  } catch (SQLException e) { // TODO Auto-generated catch block
-  e.printStackTrace(); } }
+	public MemberDto getMember(MemberDto dto) {
+		MemberDto MemberDto = null;
 
-	return MemberDto;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			con = ConnLocator.getConnection();
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT email, name, phone, date_format(regdate, '%Y/%m/%d') ");
+			sql.append("FROM member ");
+			sql.append("WHERE email = ? AND pwd = PASSWORD(?) ");
+
+			pstmt = con.prepareStatement(sql.toString());
+			int index = 0;
+			pstmt.setString(++index, dto.getEmail());
+			pstmt.setString(++index, dto.getPassword());
+
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				index = 0;
+				String email = rs.getString(++index);
+				String name = rs.getString(++index);
+				String phone = rs.getString(++index);
+				String regdate = rs.getString(++index);
+				MemberDto = new MemberDto(email,name,null,phone,null,0,regdate);
+				
+			}
+		} catch (SQLException e) { // 
+			e.printStackTrace(); 
+		}finally {
+				try {
+					if (rs != null)
+						rs.close();
+					if (pstmt != null)
+						pstmt.close();
+					if (con != null)
+						con.close();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		
+
+		}
+		return MemberDto;
+
+	}
 
 }
-
-}}

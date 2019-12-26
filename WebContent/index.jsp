@@ -1,21 +1,28 @@
-<%@page import="kr.co.acorn.util.ConnLocator"%>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.PreparedStatement"%>
-<%@page import="java.sql.Connection"%>
 <%@page import="java.util.ArrayList"%>
+<%@page import="kr.co.acorn.dao.HelpMeDao"%>
+<%@page import="kr.co.acorn.util.ConnLocator"%>
 <%@page import="kr.co.acorn.dto.HelpMeDto"%>
 <%@page import="kr.co.acorn.dao.MemberDao"%>
-<%@ page pageEncoding="utf-8"%>
 <%@ include file="../inc/header.jsp" %>
+
+
+<%@ page pageEncoding="utf-8"%>
+
 <%
-MemberDao dao = MemberDao.getInstance();
+/* HelpMeDao dao = HelpMeDao.getInstance();
 ArrayList<HelpMeDto> list =  dao.select(0,1);
 
 for(HelpMeDto dto : list){
 	out.print(dto.getTitle());
 	out.print(dto.getContent());
 	out.print(dto.getAddr()); 
-}
+} 
+
+MemberDao da = MemberDao.getInstance();
+ArrayList<MemberDto> list1 =  da.select(0,1);
+for(MemberDto dto : list1){
+	out.print(dto.getName());	
+}  */
 %>
  <!-- breadcrumb start-->
     <nav aria-label="breadcrumb">

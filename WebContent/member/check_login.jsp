@@ -9,6 +9,7 @@
 	MemberDao dao = MemberDao.getInstance();
 	MemberDto dto = new MemberDto(email, null, password, null, null, 0, null);
 	dto = dao.getMember(dto);
+
 	if(dto != null){
 		//세션 시간을 설정한다. 기본시간은 30분
 		session.setMaxInactiveInterval(60*60*24);

@@ -73,9 +73,11 @@
 					<colgroup>
 						<col width="10%" />
 						<col width="15%" />
-						<col width="25%" />
-						<col width="25%" />
-						<col width="25%" />
+						<col width="15%" />
+						<col width="15%" />
+						<col width="15%" />
+						<col width="15%" />
+						<col width="15%" />
 					</colgroup>
 					<thead>
 						<tr>
@@ -83,6 +85,8 @@
 							<th scope="col">이름</th>
 							<th scope="col">이메일</th>
 							<th scope="col">휴대폰번호</th>
+							<th scope="col">주소</th>
+							<th scope="col">성별</th>
 							<th scope="col">등록일</th>
 						</tr>
 					</thead>
@@ -94,6 +98,8 @@
 							<td><%=dto.getName() %></td>
 							<td><a href="view.jsp?page=<%=cPage%>&email=<%=dto.getEmail()%>"><%=dto.getEmail() %></a></td>
 							<td><%=dto.getPhone() %></td>
+							<td><%=dto.getAddr() %></td>
+							<td><%=dto.getGender() %></td>
 							<td><%=dto.getRegdate() %></td>
 						</tr>
 						<%} %>
@@ -145,7 +151,7 @@
 				</nav>
 			</div>
 			<div class="text-right">
-				<a href="write.jsp?page=<%=cPage%>" class="btn btn-outline-primary">사원등록</a>
+				<a href="write.jsp?page=<%=cPage%>" class="btn btn-outline-primary">회원등록</a>
 			</div>
 
 		</div>

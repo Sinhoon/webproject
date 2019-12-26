@@ -122,8 +122,6 @@ public class HelpMeDao {
 			sql.append("ORDER BY regdate DESC ");
 			sql.append("LIMIT ?, ? ");//
 			
-			System.out.println(con);
-			
 			pstmt = con.prepareStatement(sql.toString());
 			int index = 0;
 			pstmt.setInt(++index, start);

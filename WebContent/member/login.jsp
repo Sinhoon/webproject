@@ -1,4 +1,5 @@
 <%@ page pageEncoding="utf-8"%>
+
 <%@ include file="../inc/header.jsp"%>
 <%
 	if (memberDto != null){

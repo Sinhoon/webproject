@@ -74,9 +74,9 @@
 				<div class="form-group row">
 					<label for="gender" class="col-sm-2 col-form-label">성별</label>
 					<div class="col-sm-10">
-						남자<input type="radio" class="form-control" id="gender" name="gender" value= 1
+						남자<input type="radio"  id="gender" name="gender" value= 1
 							style="font-size:10px; width:15px; height:15px"> 
-						여자<input type="radio" class="form-c	ontrol" id="gender" name="gender" value= 2
+						여자<input type="radio"  id="gender" name="gender" value= 2
 							style="font-size:10px; width:15px; height:15px">
 						<div id="genderMessage"></div>
 					</div>
