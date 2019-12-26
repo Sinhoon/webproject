@@ -36,11 +36,11 @@
 	%>
 	<div class="collapse navbar-collapse" id="navbarTogglerDemo02">
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-			<li class="nav-item <%if (uri.startsWith("/dept")) {%>active<%}%>">
-				<a class="nav-link" href="/dept/list.jsp">요청 </a>
+			<li class="nav-item <%if (uri.startsWith("/ask")) {%>active<%}%>">
+				<a class="nav-link" href="/ask/write.jsp">요청 </a>
 			</li>
-			<li class="nav-item <%if (uri.startsWith("/emp")) {%>active<%}%>">
-				<a class="nav-link" href="/emp/list.jsp">수락 </a>
+			<li class="nav-item <%if (uri.startsWith("/help")) {%>active<%}%>">
+				<a class="nav-link" href="/help/list.jsp">수락 </a>
 			</li>
 
 

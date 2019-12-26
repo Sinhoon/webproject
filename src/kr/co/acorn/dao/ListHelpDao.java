@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import kr.co.acorn.dto.ListHelpDto;
 import kr.co.acorn.util.ConnLocator;
 
@@ -64,7 +67,7 @@ public class ListHelpDao {
 		return count;
 	}
 
-	public boolean insert(ListHelpDto dto,String email) {
+	public boolean insert(ListHelpDto dto) {
 		boolean isSuccess = false;
 
 		Connection con = null;
@@ -75,7 +78,7 @@ public class ListHelpDao {
 			StringBuffer sql = new StringBuffer();
 			sql.append("INSERT INTO List_Help(num, category, title, content,"
 					+ " gender,iscomplete,helper_max,ask_addr,email,regdate) ");
-			sql.append("VALUES(?, ?, ?, ?, ?,?,?,? NOW()) ");
+			sql.append("VALUES(?, ?, ?, ?, ?,?,?,? ,?,NOW()) ");
 
 			pstmt = con.prepareStatement(sql.toString());
 			int index = 0;
@@ -86,8 +89,8 @@ public class ListHelpDao {
 			pstmt.setInt(++index, dto.getGender());
 			pstmt.setInt(++index, dto.getIscomplete());
 			pstmt.setInt(++index, dto.getHmax());
-			pstmt.setString(++index, email);
 			pstmt.setString(++index, dto.getAddr());
+			pstmt.setString(++index, dto.getEmail());
 
 			pstmt.executeUpdate();
 
@@ -109,152 +112,289 @@ public class ListHelpDao {
 		}
 		return isSuccess;
 	}
-}
-/*
- * public ArrayList<ListHelpDto> select(int start, int len) {
- * ArrayList<ListHelpDto> list = new ArrayList<ListHelpDto>();
- * 
- * Connection con = null; PreparedStatement pstmt = null; ResultSet rs = null;
- * 
- * try { con = ConnLocator.getConnection(); StringBuffer sql = new
- * StringBuffer(); sql.append(
- * "SELECT category, title, content, gender, helper_email, ask_email, iscomplete, ask_addr, DATE_FORMAT(regdate, '%Y/%m/%d') "
- * ); sql.append("FROM help_me "); sql.append("ORDER BY regdate DESC ");
- * sql.append("LIMIT ?, ? ");//
- * 
- * pstmt = con.prepareStatement(sql.toString()); int index = 0;
- * pstmt.setInt(++index, start); pstmt.setInt(++index, len); rs =
- * pstmt.executeQuery(); while (rs.next()) { index = 0; int category =
- * rs.getInt(++index);
- * 
- * 
- * String title = rs.getString(++index); String content = rs.getString(++index);
- * rs.getBoolean(++index); String ask_addr = rs.getString(++index); String
- * regdate = rs.getString(++index);
- * 
- * list.add(new ListHelpDto(category, title, content, gender, helper_email,
- * ask_email, iscomplete, ask_addr, regdate));
- * 
- * } } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); } finally { try { if (rs != null) rs.close(); if (pstmt
- * != null) pstmt.close(); if (con != null) con.close();
- * 
- * } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); } }
- * 
- * return list; } }
- */
-/*
- * public HelpMeDto select(String email) { HelpMeDto dto = null;
- * 
- * Connection con = null; PreparedStatement pstmt = null; ResultSet rs = null;
- * 
- * try { con = ConnLocator.getConnection(); StringBuffer sql = new
- * StringBuffer(); sql.
- * append("SELECT m_email, m_name, m_pwd, m_phone, DATE_FORMAT(m_regdate, '%Y/%m/%d') "
- * ); sql.append("FROM member "); sql.append("WHERE m_email = ? ");
- * 
- * pstmt = con.prepareStatement(sql.toString()); int index = 0;
- * pstmt.setString(++index, email);
- * 
- * rs = pstmt.executeQuery(); if (rs.next()) { index = 0; email =
- * rs.getString(++index); String name = rs.getString(++index); String pwd =
- * rs.getString(++index); String phone = rs.getString(++index); String regdate =
- * rs.getString(++index);
- * 
- * DeptDto deptDto = new DeptDto(deptNo, null, null); // null�� name, loc
- * 
- * dto = new HelpMeDto(email, name, pwd, phone, regdate); } } catch
- * (SQLException e) { // TODO Auto-generated catch block e.printStackTrace(); }
- * finally { try { if (rs != null) rs.close(); if (pstmt != null) pstmt.close();
- * if (con != null) con.close();
- * 
- * } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); } }
- * 
- * return dto; }
- * 
- * 
- * 
- * public boolean update(HelpMeDto dto) { boolean isSuccess = false;
- * 
- * Connection con = null; PreparedStatement pstmt = null;
- * 
- * try { con = ConnLocator.getConnection(); StringBuffer sql = new
- * StringBuffer(); sql.append("UPDATE member ");
- * sql.append("SET m_name = ?, m_pwd = ?, m_phone = ? ");
- * sql.append("WHERE m_email = ? ");
- * 
- * pstmt = con.prepareStatement(sql.toString()); int index = 0;
- * pstmt.setString(++index, dto.getName()); pstmt.setString(++index,
- * dto.getPassword()); pstmt.setString(++index, dto.getPhone());
- * pstmt.setString(++index, dto.getEmail());
- * 
- * pstmt.executeUpdate();
- * 
- * isSuccess = true;
- * 
- * } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); } finally { try { if (pstmt != null) pstmt.close(); if
- * (con != null) con.close();
- * 
- * } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); }
- * 
- * } return isSuccess; }
- * 
- * public boolean delete(String email) { boolean isSuccess = false;
- * 
- * Connection con = null; PreparedStatement pstmt = null;
- * 
- * try { con = ConnLocator.getConnection(); StringBuffer sql = new
- * StringBuffer(); sql.append("DELETE FROM member WHERE m_email = ? ");
- * 
- * pstmt = con.prepareStatement(sql.toString()); int index = 0;
- * pstmt.setString(++index, email);
- * 
- * pstmt.executeUpdate();
- * 
- * isSuccess = true;
- * 
- * } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); } finally { try { if (pstmt != null) pstmt.close(); if
- * (con != null) con.close();
- * 
- * } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); } }
- * 
- * return isSuccess; }
- * 
- * public HelpMeDto getMember(HelpMeDto dto) { HelpMeDto HelpMeDto = null;
- * 
- * Connection con = null; PreparedStatement pstmt = null; ResultSet rs = null;
- * 
- * try { con = ConnLocator.getConnection(); StringBuffer sql = new
- * StringBuffer(); sql.
- * append("SELECT m_email, m_name, m_phone, date_format(m_regdate, '%Y/%m/%d') "
- * ); sql.append("FROM member ");
- * sql.append("WHERE m_email = ? AND m_pwd = PASSWORD(?) ");
- * 
- * pstmt = con.prepareStatement(sql.toString()); int index = 0;
- * pstmt.setString(++index, dto.getEmail() ); pstmt.setString(++index,
- * dto.getPassword());
- * 
- * rs = pstmt.executeQuery(); if (rs.next()) { index = 0; String email =
- * rs.getString(++index); String name = rs.getString(++index); String phone =
- * rs.getString(++index); String regdate = rs.getString(++index); HelpMeDto =
- * new HelpMeDto(email, name, null, phone, regdate); } } catch (SQLException e)
- * { // TODO Auto-generated catch block e.printStackTrace(); } finally { try {
- * if (rs != null) rs.close(); if (pstmt != null) pstmt.close(); if (con !=
- * null) con.close();
- * 
- * } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); } }
- * 
- * return HelpMeDto;
- * 
- * }
- * 
- * 
- * }
- */
+
+	public int getMaxNextNo() {
+		int result = 0;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			con = ConnLocator.getConnection();
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT IFNULL(MAX(num) +1,1) ");
+			sql.append("FROM list_help ");
+
+			pstmt = con.prepareStatement(sql.toString());
+			int index = 0;
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				index = 0;
+				result = rs.getInt(++index);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (con != null)
+					con.close();
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return result;
+	}
+	
+	// 전체보기
+	   public JSONArray selectJson(int start, int len) {
+		JSONArray jsonArray = new JSONArray();
+
+	      Connection con = null;
+	      PreparedStatement pstmt = null;
+	      ResultSet rs = null;
+
+	      try {
+	         con = ConnLocator.getConnection();
+	         StringBuffer sql = new StringBuffer();
+	         sql.append(
+	               "SELECT num, category, title, content, gender, iscomplete, helper_max, ask_addr, email, regdate ");
+	         sql.append("FROM List_help ");
+	         sql.append("WHERE helper_max != 0 and iscomplete = 0  ");
+	         sql.append("ORDER BY regdate DESC ");
+	         sql.append("LIMIT ?, ? ");//
+
+	         pstmt = con.prepareStatement(sql.toString());
+	         int index = 0;
+	         pstmt.setInt(++index, start);
+	         pstmt.setInt(++index, len);
+	         rs = pstmt.executeQuery();
+	         
+	         ListHelpDto listDto = null;
+	         JSONObject item = null;
+	         
+	         
+	         while (rs.next()) {
+	            index = 0;
+	            int num = rs.getInt(++index);
+	            int category = rs.getInt(++index);
+	            String title = rs.getString(++index);
+	            String content = rs.getString(++index);
+	            int gender = rs.getInt(++index);
+	            int iscomplete = rs.getInt(++index);
+	            int hmax = rs.getInt(++index);
+	            String addr = rs.getString(++index);
+	            String email = rs.getString(++index);
+	            String regdate = rs.getString(++index);
+
+	            item = new JSONObject();
+				item.put("num", num);
+				item.put("category", category );
+				item.put("title", title );
+				item.put("gender", gender );
+				item.put("iscomplete", iscomplete );
+				item.put("hmax", hmax );
+				item.put("addr", addr );
+				item.put("email", email );
+				item.put("regdate", regdate );
+				jsonArray.add(item);
+	         }
+	         
+	      } catch (SQLException e) { // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      } finally {
+	         try {
+	            if (rs != null)
+	               rs.close();
+	            if (pstmt != null)
+	               pstmt.close();
+	            if (con != null)
+	               con.close();
+
+	         } catch (SQLException e) { // TODO Auto-generated catch block
+	            e.printStackTrace();
+	         }
+	      }
+
+	      return jsonArray;
+	   }
+
+	   // 카테고리별 보기
+	   public ArrayList<ListHelpDto> select(int start, int len, int category) {
+	      ArrayList<ListHelpDto> list = new ArrayList<ListHelpDto>();
+
+	      Connection con = null;
+	      PreparedStatement pstmt = null;
+	      ResultSet rs = null;
+
+	      try {
+	         con = ConnLocator.getConnection();
+	         StringBuffer sql = new StringBuffer();
+	         sql.append("SELECT num, title, content, gender, iscomplete, helper_max, ask_addr, email, regdate ");
+	         sql.append("FROM List_help ");
+	         sql.append("WHERE helper_max != 0 and category = ? and iscomplete = 0 ");
+	         sql.append("ORDER BY regdate DESC ");
+	         sql.append("LIMIT ?, ? ");//
+
+	         pstmt = con.prepareStatement(sql.toString());
+	         int index = 0;
+	         pstmt.setInt(++index, start);
+	         pstmt.setInt(++index, len);
+	         pstmt.setInt(++index, category);
+	         rs = pstmt.executeQuery();
+	         while (rs.next()) {
+	            index = 0;
+	            int num = rs.getInt(++index);
+	            String title = rs.getString(++index);
+	            String content = rs.getString(++index);
+	            int gender = rs.getInt(++index);
+	            int iscomplete = rs.getInt(++index);
+	            int hmax = rs.getInt(++index);
+	            String addr = rs.getString(++index);
+	            String email = rs.getString(++index);
+	            String regdate = rs.getString(++index);
+
+	            list.add(
+	                  new ListHelpDto(num, category, title, content, gender, iscomplete, hmax, addr, email, regdate));
+
+	         }
+	      } catch (SQLException e) { // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      } finally {
+	         try {
+	            if (rs != null)
+	               rs.close();
+	            if (pstmt != null)
+	               pstmt.close();
+	            if (con != null)
+	               con.close();
+
+	         } catch (SQLException e) { // TODO Auto-generated catch block
+	            e.printStackTrace();
+	         }
+	      }
+
+	      return list;
+	   }
+
+	// 상세보기 
+	   public ListHelpDto select(int num) {
+	      ListHelpDto list = new ListHelpDto();
+
+	      Connection con = null;
+	      PreparedStatement pstmt = null;
+	      ResultSet rs = null;
+
+	      try {
+	         con = ConnLocator.getConnection();
+	         StringBuffer sql = new StringBuffer();
+	         sql.append("SELECT category, title, content, gender, iscomplete, helper_max, ask_addr, email, regdate ");
+	         sql.append("FROM List_help ");
+	         sql.append("WHERE helper_max != 0 and num = ? and iscomplete = 0 ");
+
+	         pstmt = con.prepareStatement(sql.toString());
+	         int index = 0;
+	         pstmt.setInt(++index, num);
+	         rs = pstmt.executeQuery();
+	         while (rs.next()) {
+	            index = 0;
+	            int category = rs.getInt(++index);
+	            String title = rs.getString(++index);
+	            String content = rs.getString(++index);
+	            int gender = rs.getInt(++index);
+	            int iscomplete = rs.getInt(++index);
+	            int hmax = rs.getInt(++index);
+	            String addr = rs.getString(++index);
+	            String email = rs.getString(++index);
+	            String regdate = rs.getString(++index);
+
+	            list = new ListHelpDto(num, category, title, content, gender, iscomplete, hmax, addr, email, regdate);
+
+	         }
+	      } catch (SQLException e) { // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      } finally {
+	         try {
+	            if (rs != null)
+	               rs.close();
+	            if (pstmt != null)
+	               pstmt.close();
+	            if (con != null)
+	               con.close();
+
+	         } catch (SQLException e) { // TODO Auto-generated catch block
+	            e.printStackTrace();
+	         }
+	      }
+
+	      return list;
+	   }
+	   
+	// 전체보기
+	   public ArrayList<ListHelpDto> select(int start, int len) {
+	      ArrayList<ListHelpDto> list = new ArrayList<ListHelpDto>();
+
+	      Connection con = null;
+	      PreparedStatement pstmt = null;
+	      ResultSet rs = null;
+
+	      try {
+	         con = ConnLocator.getConnection();
+	         StringBuffer sql = new StringBuffer();
+	         sql.append(
+	               "SELECT num, category, title, content, gender, iscomplete, helper_max, ask_addr, email, regdate ");
+	         sql.append("FROM List_help ");
+	         sql.append("WHERE helper_max != 0 and iscomplete = 0  ");
+	         sql.append("ORDER BY regdate DESC ");
+	         sql.append("LIMIT ?, ? ");//
+
+	         pstmt = con.prepareStatement(sql.toString());
+	         int index = 0;
+	         pstmt.setInt(++index, start);
+	         pstmt.setInt(++index, len);
+	         rs = pstmt.executeQuery();
+	         while (rs.next()) {
+	            index = 0;
+	            int num = rs.getInt(++index);
+	            int category = rs.getInt(++index);
+	            String title = rs.getString(++index);
+	            String content = rs.getString(++index);
+	            int gender = rs.getInt(++index);
+	            int iscomplete = rs.getInt(++index);
+	            int hmax = rs.getInt(++index);
+	            String addr = rs.getString(++index);
+	            String email = rs.getString(++index);
+	            String regdate = rs.getString(++index);
+
+	            list.add(
+	                  new ListHelpDto(num, category, title, content, gender, iscomplete, hmax, addr, email, regdate));
+
+	         }
+	      } catch (SQLException e) { // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      } finally {
+	         try {
+	            if (rs != null)
+	               rs.close();
+	            if (pstmt != null)
+	               pstmt.close();
+	            if (con != null)
+	               con.close();
+
+	         } catch (SQLException e) { // TODO Auto-generated catch block
+	            e.printStackTrace();
+	         }
+	      }
+
+	      return list;
+	   }
+
+	}
