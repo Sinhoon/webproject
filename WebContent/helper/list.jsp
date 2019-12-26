@@ -3,6 +3,40 @@
 <%@page import="java.util.ArrayList"%>
 <%@ page pageEncoding="utf-8"%>
 <%@ include file="../inc/header.jsp"%>
+
+<script>
+$(function(){
+	$("#loadAjax").click(function(){
+		$.ajax({
+			//type : 'GET',
+			//url : 'emp_json.jsp?start=0&length=10',
+			type : 'POST',
+			url : 'emp_json.jsp',
+			data : {"start":0,"length":10},
+			dataType : 'json',//xml, html
+			error : function(){
+				alert('Json Load Error');
+			},
+			success : function(obj){
+				console.log(obj);
+				console.log(typeof obj);
+				const listArray = obj.items;
+				let msg = '';
+				for(let i=0;i<listArray.length;i++){
+					let no = listArray[i].no;
+					let name = listArray[i].name;
+					msg += no +","+name+"<br>";
+					
+				}
+				$("#sung").html(msg);
+			}
+		});
+	});
+	
+	
+});
+</script>
+
 <%
 	int start = 0;
 	int len = 5;
