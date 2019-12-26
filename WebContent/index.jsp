@@ -1,7 +1,7 @@
 <%@page import="java.util.ArrayList"%>
-<%@page import="kr.co.acorn.dao.HelpMeDao"%>
+<%@page import="kr.co.acorn.dao.ListHelpDao"%>
 <%@page import="kr.co.acorn.util.ConnLocator"%>
-<%@page import="kr.co.acorn.dto.HelpMeDto"%>
+<%@page import="kr.co.acorn.dto.ListHelpDto"%>
 <%@page import="kr.co.acorn.dao.MemberDao"%>
 <%@ include file="../inc/header.jsp" %>
 

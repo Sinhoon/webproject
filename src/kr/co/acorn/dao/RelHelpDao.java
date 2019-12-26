@@ -6,18 +6,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import kr.co.acorn.dto.HelpMeDto;
+import kr.co.acorn.dto.ListHelpDto;
+import kr.co.acorn.dto.RelHelpDto;
 import kr.co.acorn.util.ConnLocator;
 
-public class HelpMeDao {
-	private static HelpMeDao single;
+public class RelHelpDao {
+	private static RelHelpDao single;
 
-	private HelpMeDao() {
+	private RelHelpDao() {
 	}
 
-	public static HelpMeDao getInstance() {
+	public static RelHelpDao getInstance() {
 		if (single == null) {
-			single = new HelpMeDao();
+			single = new RelHelpDao();
 		}
 		return single;
 	}
@@ -32,8 +33,8 @@ public class HelpMeDao {
 		try {
 			con = ConnLocator.getConnection();
 			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT COUNT(email) ");
-			sql.append("FROM member ");
+			sql.append("SELECT COUNT(num) ");
+			sql.append("FROM Rel_help ");
 
 			pstmt = con.prepareStatement(sql.toString());
 			int index = 0;
@@ -64,102 +65,79 @@ public class HelpMeDao {
 		return count;
 	}
 
-	public boolean isEmail(String email) {
+	public boolean insert(ListHelpDto dto,String email) {
 		boolean isSuccess = false;
 
 		Connection con = null;
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 
 		try {
 			con = ConnLocator.getConnection();
 			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT email ");
-			sql.append("FROM member ");
-			sql.append("WHERE email = ? ");
+			sql.append("INSERT INTO Rel_Help(num, helper_email, ask_email) ");
+			sql.append("VALUES(?, ?, ?) ");
 
 			pstmt = con.prepareStatement(sql.toString());
 			int index = 0;
+			pstmt.setInt(++index, dto.getNum());
+			pstmt.setString(++index, dto.getEmail());
 			pstmt.setString(++index, email);
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				index = 0;
-				isSuccess = true;
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		
+			pstmt.executeUpdate();
+
+			isSuccess = true;
+
+		} catch (SQLException e) { // TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
-				if (rs != null)
-					rs.close();
 				if (pstmt != null)
 					pstmt.close();
 				if (con != null)
 					con.close();
 
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+			} catch (SQLException e) { // TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
 
+		}
 		return isSuccess;
 	}
-
-	public ArrayList<HelpMeDto> select(int start, int len) {
-		ArrayList<HelpMeDto> list = new ArrayList<HelpMeDto>();
-
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			con = ConnLocator.getConnection();
-			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT category, title, content, gender, helper_email, ask_email, iscomplete, ask_addr, DATE_FORMAT(regdate, '%Y/%m/%d') ");
-			sql.append("FROM help_me ");
-			sql.append("ORDER BY regdate DESC ");
-			sql.append("LIMIT ?, ? ");//
-			
-			pstmt = con.prepareStatement(sql.toString());
-			int index = 0;
-			pstmt.setInt(++index, start);
-			pstmt.setInt(++index, len);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				index = 0;
-				int category = rs.getInt(++index);
-				
-				  String title = rs.getString(++index); String content = rs.getString(++index);
-				  int gender = rs.getInt(++index); String helper_email = rs.getString(++index);
-				  String ask_email = rs.getString(++index); boolean iscomplete =
-				  rs.getBoolean(++index); String ask_addr = rs.getString(++index); 
-				  String regdate = rs.getString(++index);
-
-				list.add(new HelpMeDto(category, title, content, gender, helper_email, ask_email, iscomplete, ask_addr, regdate)); 
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (con != null)
-					con.close();
-
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return list;
-	}
 }
+/*
+ * public ArrayList<ListHelpDto> select(int start, int len) {
+ * ArrayList<ListHelpDto> list = new ArrayList<ListHelpDto>();
+ * 
+ * Connection con = null; PreparedStatement pstmt = null; ResultSet rs = null;
+ * 
+ * try { con = ConnLocator.getConnection(); StringBuffer sql = new
+ * StringBuffer(); sql.append(
+ * "SELECT category, title, content, gender, helper_email, ask_email, iscomplete, ask_addr, DATE_FORMAT(regdate, '%Y/%m/%d') "
+ * ); sql.append("FROM help_me "); sql.append("ORDER BY regdate DESC ");
+ * sql.append("LIMIT ?, ? ");//
+ * 
+ * pstmt = con.prepareStatement(sql.toString()); int index = 0;
+ * pstmt.setInt(++index, start); pstmt.setInt(++index, len); rs =
+ * pstmt.executeQuery(); while (rs.next()) { index = 0; int category =
+ * rs.getInt(++index);
+ * 
+ * 
+ * String title = rs.getString(++index); String content = rs.getString(++index);
+ * rs.getBoolean(++index); String ask_addr = rs.getString(++index); String
+ * regdate = rs.getString(++index);
+ * 
+ * list.add(new ListHelpDto(category, title, content, gender, helper_email,
+ * ask_email, iscomplete, ask_addr, regdate));
+ * 
+ * } } catch (SQLException e) { // TODO Auto-generated catch block
+ * e.printStackTrace(); } finally { try { if (rs != null) rs.close(); if (pstmt
+ * != null) pstmt.close(); if (con != null) con.close();
+ * 
+ * } catch (SQLException e) { // TODO Auto-generated catch block
+ * e.printStackTrace(); } }
+ * 
+ * return list; } }
+ */
 /*
  * public HelpMeDto select(String email) { HelpMeDto dto = null;
  * 
@@ -190,33 +168,7 @@ public class HelpMeDao {
  * 
  * return dto; }
  * 
- * public boolean insert(HelpMeDto dto) { boolean isSuccess = false;
  * 
- * Connection con = null; PreparedStatement pstmt = null;
- * 
- * try { con = ConnLocator.getConnection(); StringBuffer sql = new
- * StringBuffer();
- * sql.append("INSERT INTO member(m_email, m_name, m_pwd, m_phone, m_regdate) "
- * ); sql.append("VALUES(?, ?, ?, ?, CURDATE()) ");
- * 
- * 
- * pstmt = con.prepareStatement(sql.toString()); int index = 0;
- * pstmt.setString(++index, dto.getEmail()); pstmt.setString(++index,
- * dto.getName()); pstmt.setString(++index, dto.getPassword());
- * pstmt.setString(++index, dto.getPhone());
- * 
- * pstmt.executeUpdate();
- * 
- * isSuccess = true;
- * 
- * } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); } finally { try { if (pstmt != null) pstmt.close(); if
- * (con != null) con.close();
- * 
- * } catch (SQLException e) { // TODO Auto-generated catch block
- * e.printStackTrace(); }
- * 
- * } return isSuccess; }
  * 
  * public boolean update(HelpMeDto dto) { boolean isSuccess = false;
  * 

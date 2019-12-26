@@ -21,7 +21,7 @@
 %>
 <script>
 	alert('회원이 등록 되었습니다.');
-	location.href="list.jsp?page=1";
+	location.href="login.jsp?page=1";
 </script>
 <%}else{%>
 <script>

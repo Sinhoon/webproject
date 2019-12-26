@@ -1,37 +1,44 @@
 package kr.co.acorn.dto;
 
-public class HelpMeDto {
+public class ListHelpDto {
+	private int num;
 	private int category;
 	private String title;
 	private String content;
 	private int gender;
-	private String helper_email;
-	private String ask_email;
-	private boolean iscomplete;
+	private int iscomplete;
+	private int hmax;
 	private String addr;
+	private String email;
 	private String regdate;
 
-	public HelpMeDto() {
+	public ListHelpDto(int num, int category, String title, String content, int gender, int iscomplete, int hmax,
+			String addr, String email, String regdate) {
 		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public HelpMeDto(int category, String title, String content, int gender, String helper_email, String ask_email,
-			boolean iscomplete, String addr, String regdate) {
-		super();
+		this.num = num;
 		this.category = category;
 		this.title = title;
 		this.content = content;
 		this.gender = gender;
-		this.helper_email = helper_email;
-		this.ask_email = ask_email;
 		this.iscomplete = iscomplete;
+		this.hmax = hmax;
 		this.addr = addr;
+		this.email = email;
 		this.regdate = regdate;
 	}
 
-	
+	public ListHelpDto() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
+	public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
 
 	public int getCategory() {
 		return category;
@@ -65,28 +72,20 @@ public class HelpMeDto {
 		this.gender = gender;
 	}
 
-	public String getHelper_email() {
-		return helper_email;
-	}
-
-	public void setHelper_email(String helper_email) {
-		this.helper_email = helper_email;
-	}
-
-	public String getAsk_email() {
-		return ask_email;
-	}
-
-	public void setAsk_email(String ask_email) {
-		this.ask_email = ask_email;
-	}
-
-	public boolean isIscomplete() {
+	public int getIscomplete() {
 		return iscomplete;
 	}
 
-	public void setIscomplete(boolean iscomplete) {
+	public void setIscomplete(int iscomplete) {
 		this.iscomplete = iscomplete;
+	}
+
+	public int getHmax() {
+		return hmax;
+	}
+
+	public void setHmax(int hmax) {
+		this.hmax = hmax;
 	}
 
 	public String getAddr() {
@@ -97,6 +96,14 @@ public class HelpMeDto {
 		this.addr = addr;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public String getRegdate() {
 		return regdate;
 	}
@@ -104,7 +111,5 @@ public class HelpMeDto {
 	public void setRegdate(String regdate) {
 		this.regdate = regdate;
 	}
-
-	
 
 }
