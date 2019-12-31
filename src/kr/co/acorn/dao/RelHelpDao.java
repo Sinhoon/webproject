@@ -65,7 +65,7 @@ public class RelHelpDao {
 		return count;
 	}
 
-	public boolean changehmax(ListHelpDto dto) {
+	public boolean changehmax(int num) {
 		boolean isSuccess = false;
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -78,7 +78,7 @@ public class RelHelpDao {
 
 			pstmt = con.prepareStatement(sql.toString());
 			int index = 0;
-			pstmt.setInt(++index, dto.getNum());
+			pstmt.setInt(++index, num);
 			pstmt.executeUpdate();
 
 			isSuccess = true;

@@ -53,28 +53,40 @@
 		endPage = totalPage;
 	}
 %> --%>
+<style>
+	.border-styles > p{
+		margin: 2px 0;
+		padding: 1px 3px;
+		border-width: 2px;
+		border-color: #aaa;
+	}
+</style>
 <script src="../js/jquery-3.4.1.js"></script>
 <script>
 $(function(){
-	$("#all").click(function(){
+	$(".all").click(function(){
+		console.log($(this).val())
 		$.ajax({
 			//type : 'GET',
 			//url : 'emp_json.jsp?start=0&length=10',
 			type : 'POST',
 		    url : 'helpjson.jsp',
-			data : {"start" :0,"length":5},
+			data : {"start" :0,"length":5,"ct":$(this).val()},
 			dataType : 'json',//xml, html
 			error : function(){
 				alert('Json Load Error');
 			},
 			success : function(obj){
+				$(".table").html("<colgroup> <col width='10%'/><col width='40%' /><col width='25%' /><col width='25%' /></colgroup>"
+						           +"<thead><tr><th scope='col'>번호</th><th scope='col'>제목</th><th scope='col'>날짜</th><th scope='col'>수락</th></thead>");
+				
+				console.log(obj)
 				if (obj.length !=0){
-					for(let i=0; i<obj.length;i++){
-						$("#tbo"+i).html("<tr><td>"+JSON.stringify(obj[i].num)+"</td>"
-								+"<td><button id='a'>"+JSON.stringify(obj[i].title)+"</a></td>"
-								+"<td>"+JSON.stringify(obj[i].regdate)+"</td>"
-								+"<td><button>수락</button></td></tr>");
-						console.log(i);
+				for(let i=0; i<obj.length;i++){
+					$(".table").append("<tr><td>"+obj[i].num+"</td>"
+							+"<td><button class='bt' id="+obj[i].num+">"+obj[i].title+"</button></td>"
+							+"<td>"+ obj[i].regdate +"</td>"
+							+"<td><button class='sbt' id=b_"+obj[i].num+">수락</button></td></tr>");
 					}
 				}
 				<%
@@ -127,28 +139,65 @@ $(function(){
 				}
 				%>
 				
-			<%-- 	if (obj.size() !=0){
-					for(let i=0; i<obj.size();i++){
-						$("#test").html("<tr> <td>"<%=pageNum-- %>"</td>"
-						"<td><a href='view.jsp?page="<%=cPage%>"&email="<%=dto.getTitle()%>"'>"<%=dto.getTitle() %></a></td>
-						"<td>"+obj+"</td>"
-						"<td>"<%=dto.getIscomplete() %>"</td>"
-					"</tr>");
-					}
-					
-				}
-				else{
-				"<tr><td colspan='6'>"데이터가 존재하지 않습니다."</td></tr>"
-				} --%>
-				
-				
 			}
 		});
 	});
-	
-	
-	
-	
+	 
+      $(document).on("click",".bt",function(event){
+        // 동적으로 여러 태그가 생성된 경우라면 이런식으로 클릭된 객체를 this 키워드를 이용해서 잡아올 수 있다.
+        let st = $(this).attr('id');
+        $.ajax({
+			//type : 'GET',
+			//url : 'emp_json.jsp?start=0&length=10',
+			type : 'POST',
+		    url : 'showjson.jsp',
+			data : {"num" :st},
+			dataType : 'json',//xml, html
+			error : function(){
+				alert('Json Load Error');
+			},
+			success : function(obj){
+				if (obj.length !=0){
+					if($("#"+st).parent('td').children('div').text() != ""){
+						$("#"+st).parent('td').children('div').remove('div');
+					}else{
+						$("#"+st).parents('td').append("<div class='form-group shadow-textarea'><textarea class='form-control z-depth-1' readonly='readonly' id='exampleFormControlTextarea6' rows='3' style='background-color: white;'>"
+								+ obj.content +"</textarea></div>")
+					}
+				}
+			}
+		});
+      });
+      
+      $(".sbt").click(function(){
+    	let st = $(this).attr('id');
+  		$.ajax({
+  			//type : 'GET',
+  			//url : 'emp_json.jsp?start=0&length=10',
+  			type : 'POST',
+  		    url : 'helpjson.jsp',
+  			data : {"num":st},
+  			dataType : 'json',//xml, html
+  			error : function(){
+  				alert('Json Load Error');
+  			},
+  			success : function(obj){
+  				$(".table").html("<colgroup> <col width='10%'/><col width='40%' /><col width='25%' /><col width='25%' /></colgroup>"
+  						           +"<thead><tr><th scope='col'>번호</th><th scope='col'>제목</th><th scope='col'>날짜</th><th scope='col'>수락</th></thead>");
+  				
+  				console.log(obj)
+  				if (obj.length !=0){
+  				for(let i=0; i<obj.length;i++){
+  					$(".table").append("<tr><td>"+obj[i].num+"</td>"
+  							+"<td><button class='bt' id="+obj[i].num+">"+obj[i].title+"</button></td>"
+  							+"<td>"+ obj[i].regdate +"</td>"
+  							+"<td><button  id=b_"+obj[i].num+">수락</button></td></tr>");
+  					}
+  				}
+  		
+  			}
+  		});
+  	});
 });
 </script>
 
@@ -157,7 +206,7 @@ $(function(){
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item"><a href="/index.jsp">HOME</a></li>
 		<li class="breadcrumb-item active" aria-current="page">요청페이지</li>
-	</ol>
+	</ol>	
 </nav>
 <!-- breadcrumb end-->
 
@@ -166,27 +215,26 @@ $(function(){
 	<div class="row">
 		<div class="col-lg-12">
 			<h3>
-				요청리스트(<%=totalRows%>)
+				수락리스트
 			</h3>
 			<form name="f" method="post" action="save.jsp">
 				<div class="form-group row">
 					<label for="category" class="col-sm-2 col-form-label">카테고리</label>
 					<div class="col-sm-10">
-						전체<input type="radio" id="all" name="all"
+						전체<input type="radio" class="all" name="category" value = 0
 							style="font-size: 10px; width: 15px; height: 15px">&nbsp;&nbsp;&nbsp;
-						해주소<input type="radio" id="category" name="category" value=1
+						해주소<input type="radio" class="all" name="category" value=1
 							style="font-size: 10px; width: 15px; height: 15px">&nbsp;&nbsp;&nbsp;
-						알려주소<input type="radio" id="category" name="category" value=2
+						알려주소<input type="radio" class="all" name="category" value=2
 							style="font-size: 10px; width: 15px; height: 15px">&nbsp;&nbsp;&nbsp;
-						가져다주소<input type="radio" id="category" name="category" value=3
+						가져다주소<input type="radio" class="all" name="category" value=3
 							style="font-size: 10px; width: 15px; height: 15px">&nbsp;&nbsp;&nbsp;
-						기타소<input type="radio" id="category" name="category" value=4
-							style="font-size: 10px; width: 15px; height: 15px">
 						<div id="categoryMessage"></div>
 					</div>
 				</div>
 			</form>
 			<div class="table-responsive-lg">
+				<p id="ct" style='display:none;'></p>
 				<table class="table table-hover">
 					<colgroup>
 						<col width="10%" />
@@ -196,81 +244,16 @@ $(function(){
 					</colgroup>
 					<thead>
 						<tr>
-							<th scope="col">#</th>
+							<th scope="col">번호</th>
 							<th scope="col">제목</th>
 							<th scope="col">날짜</th>
 							<th scope="col">수락</th>
 						</tr>
 					</thead>
-					<tbody id="tbo1">
-
-
-						<%-- <%if(list.size() != 0){%>
-						<%for(ListHelpDto dto : list){ %>
-						<tr>
-							<td><%=pageNum-- %></td>
-							<td><a href="view.jsp?page=<%=cPage%>&email=<%=dto.getTitle()%>"><%=dto.getTitle() %></a></td>
-							<td><%=dto.getRegdate() %></td>
-							<td><%=dto.getIscomplete() %></td>
-						</tr>
-						<%} %>
-						<%}else{ %>
-						<tr>
-							<td colspan="6">데이터가 존재하지 않습니다.</td>
-						</tr>
-						<%} %> --%>
-					</tbody>
-					
-					<tbody id="tbo2">
-
-
-						<%-- <%if(list.size() != 0){%>
-						<%for(ListHelpDto dto : list){ %>
-						<tr>
-							<td><%=pageNum-- %></td>
-							<td><a href="view.jsp?page=<%=cPage%>&email=<%=dto.getTitle()%>"><%=dto.getTitle() %></a></td>
-							<td><%=dto.getRegdate() %></td>
-							<td><%=dto.getIscomplete() %></td>
-						</tr>
-						<%} %>
-						<%}else{ %>
-						<tr>
-							<td colspan="6">데이터가 존재하지 않습니다.</td>
-						</tr>
-						<%} %> --%>
-					</tbody>
-					<tbody id="tbo3">
-					</tbody>
-					<tbody id="tbo4">
-					</tbody>
-					<tbody id="tbo5">
-					</tbody>
-					<tbody id="tbo6">
+					<tbody>
 					</tbody>
 					
 				</table>
-				<div id="test"></div>
-				<script>
-$(function(){
-	$("#a").click(function(){
-		$.ajax({
-			//type : 'GET',
-			//url : 'emp_json.jsp?start=0&length=10',
-			type : 'POST',
-		    url : 'helpjson.jsp',
-			data : {"start" :0,"length":5},
-			dataType : 'json',//xml, html
-			error : function(){
-				alert('Json Load Error');
-			},
-			success : function(obj){
-						console.log("ss");
-						$("#test").html(JSON.stringify(obj[i].content));
-				}
-				
-			});
-	});
-	</script>
 				<nav aria-label="Page navigation example">
 					<ul class="pagination justify-content-center">
 						<%
@@ -295,7 +278,7 @@ $(function(){
 							}
 						%>
 						<%
-							if (currentBlock == totalBlock) {
+							if (currentBlock == totalBlock) {	
 						%>
 						<li class="page-item disabled"><a class="page-link" href="#"
 							tabindex="-1" aria-disabled="true">Next</a></li>
