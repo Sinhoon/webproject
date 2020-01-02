@@ -6,7 +6,6 @@
 
 <%
 	RelHelpDao dao = RelHelpDao.getInstance();
-	int num = Integer.parseInt(request.getParameter("num"));
-	Boolean isSuccess = dao.changehmax(num);
-	
+	int num =  Integer.parseInt(request.getParameter("num"));
+	out.print(dao.helperJson(num));
 %>

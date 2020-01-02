@@ -57,8 +57,7 @@
 			<%
 				} else {
 			%>
-			<li class="nav-item"><a class="nav-link" href="#"><%=memberDto.getName()%>님
-					환영합니다.</a></li>
+			<li class="nav-item"><a class="nav-link" href="/mypage/list.jsp">MyPage</a></li>	
 			<li class="nav-item"><a class="nav-link"
 				href="/member/logout.jsp">로그아웃</a></li>
 			<%
