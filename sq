@@ -1,0 +1,66 @@
+CREATE TABLE member(
+email VARCHAR(150)  PRIMARY KEY,
+pwd CHAR(41) NOT NULL,
+name VARCHAR(20) NOT NULL ,
+phone VARCHAR(15) NOT NULL,
+addr VARCHAR(100) NOT NULL,
+gender BOOLEAN NOT NULL,
+regdate DATETIME NOT NULL
+);
+
+CREATE TABLE LIST_HELP(
+num INT PRIMARY KEY, #주문번호 - 고유값
+category INT NOT NULL,
+title VARCHAR(300) NOT NULL,
+content VARCHAR(1500) NOT NULL,
+gender int NOT NULL,   #1 : 남자, 2 : 여자, 3 : 성별무관
+iscomplete int NOT NULL DEFAULT 1, #0.진행중  ,1.대기중 , 2 완료
+helper_max INT NOT NULL DEFAULT 1,
+ask_addr VARCHAR(100) NOT NULL,
+email VARCHAR(150) NOT NULL,
+regdate DATETIME NOT NULL
+);
+
+
+CREATE TABLE REL_HELP (
+Num INT NOT NULL,
+helper_email VARCHAR(150),
+ask_email VARCHAR(150) NOT NULL,
+FOREIGN KEY(num) REFERENCES LIST_help(num),
+foreign key(helper_email) references member(email),
+foreign key(ask_email) references member(email)
+);
+
+
+
+SELECT * FROM LIST_help;
+
+
+INSERT INTO  member VALUES("my@naver.com",password("1234"),"성영한","010-2322-3232","서울 용산구",1,NOW());
+INSERT INTO  member VALUES("syh1011@hbilab.org",password("1235"),"조효진","010-3422-3232","서울 중구",2,NOW());
+
+
+INSERT INTO List_HELP VALUES(1,2, "java특강","2주만에 자바한권 독파",3,1,3,"서울시 중구","syh1011@hbilab.org",NOW());
+
+INSERT INTO REL_HELP VALUES(1,'my@naver.com' , "syh1011@hbilab.org");
+
+SELECT category, title, content, gender, iscomplete, helper_max, ask_addr, email, regdate 
+FROM list_help 
+WHERE num=4
+
+SELECT num, category, title, content, gender, iscomplete, helper_max, ask_addr, email, regdate 
+FROM list_help 
+WHERE helper_max != 0 and iscomplete = 0 and category= 1
+
+SELECT * FROM rel_help
+
+SELECT COUNT(num) 
+FROM rel_help 
+Where num != 1 and helper_email='my@naver.com' 
+
+
+SELECT l.num, category, title, content, gender, iscomplete, helper_max, ask_addr, email, regdate ,r.choice , r.helper_email 
+FROM list_help l join rel_help r USING(num)
+WHERE email="my@naver.com" AND num=4
+
+DELETE FROM rel_help WHERE num = 1
