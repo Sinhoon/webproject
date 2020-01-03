@@ -15,47 +15,29 @@
 <script src="../js/jquery-3.4.1.js"></script>
 <script>
 
-<%-- /*-------------------- 수락자 인원 확인 -----------------------*/
-$(function(){
-	$("#ask").click(function(){
-    	let num = $(this).closest('tr').find('button:first').attr('id');
-    	let email = '<%=memberDto.getEmail()%>';
-		$.ajax({
-			//type : 'GET',
-			//url : 'emp_json.jsp?start=0&length=10',
-			type : 'POST',
-		    url : 'helperlist.jsp',
-			data : {"start" :0,"length":5,"email":email},
-			dataType : 'json',//xml, html
-			error : function(){
-				alert('Json Load Error');
-			},
-			success : function(obj){
-				console.log(obj)
-				$(".table>tbody").html("");
-				if (obj.length !=0){
-				for(let i=0; i<obj.length;i++){
-					if(obj[i].iscomplete == 1){iscom="진행중"}
-					$(".table>tbody").append("<tr><td>"+obj[i].num+"</td>"
-							+"<td><button class='bt' id="+obj[i].num+">"+obj[i].title+"</button></td>"
-							+"<td>"+ obj[i].regdate +"</td>" 
-							+"<td>"+ iscom +"</td>" 
-							+"<td><button class='sbt'>취소</button></td></tr>");
-					}
-				}
-	
-			}
-		});
-	}); --%>
-
 /*--------------------- 카테고리 선택 ------------------------*/ 
 $(function(){
+	$("#ask").click();
+ 	playAlert = setInterval(function() {
+			$("#ask").click();
+			$(".bt").click();
+			$(".hbt").click();
+		}, 3000); 
+	//clearInterval(playAlert);
+	
+		
 	$("#ask").click(function(){
 		let email = '<%=memberDto.getEmail()%>';
-		let iscom = "대기중"
+		let iscom = "미선택"
+		let bt = ""
+		let hbt = ""
+		if ($('.bt').hasClass('able') == true ){
+			bt = 'able';	
+		}
+		if ($('.hbt').hasClass('ables') == true ){
+			hbt = 'ables';
+		}
 		$.ajax({
-			//type : 'GET',
-			//url : 'emp_json.jsp?start=0&length=10',
 			type : 'POST',
 		    url : 'asklist.jsp',
 			data : {"start" :0,"length":5,"email":email},
@@ -64,69 +46,22 @@ $(function(){
 				alert('Json Load Error');
 			},
 			success : function(obj){
-				console.log(obj)
 				$(".table>tbody").html("");
 				if (obj.length !=0){
 				for(let i=0; i<obj.length;i++){
 					if(obj[i].iscomplete == 1){iscom="진행중"}
+					else{iscom="미선택"}
 					$(".table>tbody").append("<tr><td>"+obj[i].num+"</td>"
-							+"<td><button class='bt' id="+obj[i].num+">"+obj[i].title+"</button></td>"
+							+"<td><button class='bt "+bt+"' id="+obj[i].num+">"+obj[i].title+"</button></td>"
 							+"<td>"+ obj[i].regdate +"</td>" 
-							+"<td><button class='hbt'>"+obj[i].hmax+"명</td>" 
+							+"<td><button class='hbt "+hbt+"'>"+obj[i].hmax+"명</td>" 
 							+"<td>"+ iscom +"</td>" 
 							+"<td><button class='sbt'>취소</button></td></tr>");
 					}
-				}
-				<%
-				int start = 0;
-				int len = 5;
-				int pageLength = 10;
-				int totalRows = 0;
-				int totalPage = 0;
-				int startPage = 0;
-				int endPage = 0;
-				int pageNum = 0;
-
-				String tempPage = request.getParameter("page");
-				//String tempLen = request.getParameter("len");
-				int cPage = 0;
-				if (tempPage == null || tempPage.length() == 0) {
-					cPage = 1;
+					
+	
 				}
 
-				try {
-					cPage = Integer.parseInt(tempPage);
-				} catch (NumberFormatException e) {
-					cPage = 1;
-				}
-
-				//An = a1 + (n-1)*d : 등차수열
-				ListHelpDao dao = ListHelpDao.getInstance();
-				totalRows = dao.getTotalRows();
-				totalPage = totalRows % len == 0 ? totalRows / len : totalRows / len + 1;
-				if (totalPage == 0) {
-					totalPage = 1;
-				}
-				if (cPage > totalPage) {
-					totalPage = 1;
-				}
-
-				start = (cPage - 1) * len;
-				pageNum = totalRows - (cPage - 1) * (len);
-
-				ArrayList<ListHelpDto> list = dao.select(start, len);
-
-				int currentBlock = cPage % pageLength == 0 ? (cPage / pageLength) : (cPage / pageLength + 1);
-				int totalBlock = totalPage % pageLength == 0 ? (totalPage / pageLength) : (totalPage / pageLength + 1);
-
-				startPage = 1 + (currentBlock - 1) * pageLength;
-				endPage = pageLength + (currentBlock - 1) * pageLength;
-
-				if (currentBlock == totalBlock) {
-					endPage = totalPage;
-				}
-				%>
-				
 			}
 		});
 	});
@@ -135,6 +70,7 @@ $(function(){
 /*--------------------- 상세보기------------------------*/ 
       $(document).on("click",".bt",function(event){
         // 동적으로 여러 태그가 생성된 경우라면 이런식으로 클릭된 객체를 this 키워드를 이용해서 잡아올 수 있다.
+        let bt = $(this);
         let st = $(this).attr('id');
         $.ajax({
 			//type : 'GET',
@@ -150,9 +86,21 @@ $(function(){
 				if (obj.length !=0){
 					if($("#"+st).parent('td').children('div').text() != ""){
 						$("#"+st).parent('td').children('div').remove('div');
+						if($(".bt").hasClass("able") === true) {
+							bt.removeClass('able');
+						}else{
+						}
+
 					}else{
-						$("#"+st).parents('td').append("<div class='form-group shadow-textarea'><textarea class='form-control z-depth-1' readonly='readonly' id='exampleFormControlTextarea6' rows='3' style='background-color: white;'>"
+						$("#"+st).parent('td').append("<div class='form-group shadow-textarea'><textarea class='form-control z-depth-1' readonly='readonly' id='exampleFormControlTextarea6' rows='3' style='background-color: white;'>"
 								+ obj.content +"</textarea></div>")
+						if($(".bt").hasClass("able") === true) {
+							
+						}else{
+							bt.addClass('able');
+						}
+						
+						
 					}
 				}
 			}
@@ -163,6 +111,8 @@ $(function(){
 /*--------------------- 수락자 결정  ------------------------*/ 
       $(document).on("click",".hbt",function(event){
     	let num = $(this).closest('tr').find('button:first').attr('id');
+    	let ts = $(this);
+    	let text = "선택";
   		$.ajax({
   			//type : 'GET',
   			//url : 'emp_json.jsp?start=0&length=10',
@@ -174,7 +124,22 @@ $(function(){
   				alert('Json Load Error');
   			},
   			success : function(obj){
-  				console.log(obj);
+				if (obj.length !=0){
+					if(ts.parent('td').children('div').text() != ""){
+						//ts.parent('td').children('div').remove('div');
+					}else{
+						ts.parent('td').append("<div class='table-responsive-lg'><table class='table table-hover'></table></div>")
+						for(let i=0; i<obj.length;i++){
+							if(obj[i].choice == 1){
+								text ="취소";
+							}else{
+								text ="선택";
+							}
+							ts.parents('td').find('table').append("<tr><td>"+obj[i].phone+"</td><td>"+obj[i].gender+"</td><td>"
+							+obj[i].addr +"</td><td><button class='choice' id="+obj[i].helper_email+">"+text+"</button></td></tr>")
+						}
+					}
+				}
   			}
   		});
   	});
@@ -183,8 +148,6 @@ $(function(){
 $(document).on("click",".sbt",function(event){
 	let num = $(this).closest('tr').find('button:first').attr('id');
 		$.ajax({
-			//type : 'GET',
-			//url : 'emp_json.jsp?start=0&length=10',
 			type : 'POST',
 		    url : 'deletejson.jsp',
 			data : {"num":num},
@@ -197,6 +160,28 @@ $(document).on("click",".sbt",function(event){
 			}
 		});
 	});
+
+/*--------------------- 수락자 선택  및 취소  ------------------------*/ 
+$(document).on("click",".choice",function(event){
+	let num = $(this).closest('tr').parents('tr').children('td:first').text();
+	let email = $(this).attr('id');
+	let choice = $(this).text();
+	let ts = $(this).closest('tr').parents('tr').children('td:nth-child(4)').find('button:first');
+		$.ajax({
+			type : 'POST',
+		    url : 'choicejson.jsp',
+			data : {"num":num,"email":email,"choice":choice},
+			dataType : 'json',//xml, html
+			error : function(){		
+				alert('Json Load Error');
+			},
+			success : function(obj){
+				//$("#ask").click();
+				//document.getElementsByClassName("hbt")[0].click()
+			}
+		});
+	});
+	
 });
 </script>	
 
@@ -228,14 +213,14 @@ $(document).on("click",".sbt",function(event){
 				<h5>
 				요청리스트
 				</h5>
-				<table class="table table-hover">
+				<table class="table table-hover" id="tble">
 					<colgroup>
+						<col width="5%" />
+						<col width="20%" />
 						<col width="10%" />
-						<col width="20%" />
-						<col width="15%" />
-						<col width="20%" />
-						<col width="15%" />
-						<col width="15%" />
+						<col width="35%" />
+						<col width="7%" />
+						<col width="7%" />
 					</colgroup>
 					<thead>
 						<tr>
@@ -249,46 +234,8 @@ $(document).on("click",".sbt",function(event){
 					</thead>
 					<tbody>
 					</tbody>
-					
 				</table>
-				<nav aria-label="Page navigation example">
-					<ul class="pagination justify-content-center">
-						<%
-							if (currentBlock == 1) {
-						%>
-						<li class="page-item disabled"><a class="page-link" href="#"
-							tabindex="-1" aria-disabled="true">Previous</a></li>
-						<%
-							} else {
-						%>
-						<li class="page-item"><a class="page-link"
-							href="list.jsp?page=<%=startPage - 1%>">Previous</a></li>
-						<%
-							}
-						%>
-						<%
-							for (int i = startPage; i <= endPage; i++) {
-						%>
-						<li class="page-item <%if (cPage == i) {%>active<%}%>"><a
-							class="page-link" href="list.jsp?page=<%=i%>"><%=i%></a></li>
-						<%
-							}
-						%>
-						<%
-							if (currentBlock == totalBlock) {	
-						%>
-						<li class="page-item disabled"><a class="page-link" href="#"
-							tabindex="-1" aria-disabled="true">Next</a></li>
-						<%
-							} else {
-						%>
-						<li class="page-item"><a class="page-link"
-							href="list.jsp?page=<%=endPage + 1%>">Next</a></li>
-						<%
-							}
-						%>
-					</ul>
-				</nav>
+		
 			</div>
 			
 		</div>

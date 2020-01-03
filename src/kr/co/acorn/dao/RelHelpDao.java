@@ -67,65 +67,75 @@ public class RelHelpDao {
 
 		return count;
 	}
-	//	수락자 가져오기
-		public JSONArray helperJson(int num) {
-			JSONArray jsonArray = new JSONArray();
 
-			Connection con = null;
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
+	// 수락자 가져오기
+	public JSONArray helperJson(int num) {
+		JSONArray jsonArray = new JSONArray();
 
-			try {
-				con = ConnLocator.getConnection();
-				StringBuffer sql = new StringBuffer();
-				sql.append(
-						"SELECT num, helper_email, ask_email, choice ");
-				sql.append("FROM rel_help ");
-				sql.append("WHERE num = ? ");
-				sql.append("ORDER BY choice DESC ");
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 
-				pstmt = con.prepareStatement(sql.toString());
-				int index = 0;
-				pstmt.setInt(++index, num);
+		try {
+			con = ConnLocator.getConnection();
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT num, helper_email, ask_email, choice , m.gender,m.addr,m.phone ");
+			sql.append("FROM member m join rel_help r ");
+			sql.append("WHERE m.email=r.helper_email AND num = ? ");
+			sql.append("ORDER BY choice DESC ");
 
-				rs = pstmt.executeQuery();
+			pstmt = con.prepareStatement(sql.toString());
+			int index = 0;
+			pstmt.setInt(++index, num);
 
-				ListHelpDto listDto = null;
-				JSONObject item = null;
+			rs = pstmt.executeQuery();
 
-				while (rs.next()) {
-					index = 0;
-					num = rs.getInt(++index);
-					String helper_email = rs.getString(++index);
-					String ask_email = rs.getString(++index);
-					int choice = rs.getInt(++index);
-					item = new JSONObject();
-					item.put("num", num);
-					item.put("category", helper_email);
-					item.put("title", ask_email);
-					item.put("gender", choice);
+			ListHelpDto listDto = null;
+			JSONObject item = null;
 
-					jsonArray.add(item);
+			while (rs.next()) {
+				index = 0;
+				num = rs.getInt(++index);
+				String helper_email = rs.getString(++index);
+				String ask_email = rs.getString(++index);
+				int choice = rs.getInt(++index);
+				int gender = rs.getInt(++index);
+				String addr = rs.getString(++index);
+				String phone = rs.getString(++index);
+				phone = phone.replaceFirst("(^[0-9]{4})([0-9]{4})([0-9]{4})$", "$1-$2-$3");
+				item = new JSONObject();
+				item.put("num", num);
+				item.put("helper_email", helper_email);
+				item.put("ask_email", ask_email);
+				item.put("choice", choice);
+				if (gender == 1) {
+					item.put("gender", "남");
+				} else {
+					item.put("gender", "여");
 				}
+				item.put("addr", addr);
+				item.put("phone", phone);
+				jsonArray.add(item);
+			}
+
+		} catch (SQLException e) { // TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (con != null)
+					con.close();
 
 			} catch (SQLException e) { // TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
-				try {
-					if (rs != null)
-						rs.close();
-					if (pstmt != null)
-						pstmt.close();
-					if (con != null)
-						con.close();
-
-				} catch (SQLException e) { // TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
-
-			return jsonArray;
 		}
+
+		return jsonArray;
+	}
 
 	// 관계 삭제
 	public boolean deleteJson(int num) {
@@ -210,7 +220,8 @@ public class RelHelpDao {
 		return count;
 	}
 
-	public boolean changehmax(int num) {
+	// 수락자수 감소
+	public boolean downhmax(int num) {
 		boolean isSuccess = false;
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -245,6 +256,153 @@ public class RelHelpDao {
 		return isSuccess;
 	}
 
+//	수락자수 증가
+	public boolean uphmax(int num) {
+		boolean isSuccess = false;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			con = ConnLocator.getConnection();
+			StringBuffer sql = new StringBuffer();
+			sql.append("UPDATE List_Help SET helper_max = helper_max+1 ");
+			sql.append("WHERE num = ? ");
+
+			pstmt = con.prepareStatement(sql.toString());
+			int index = 0;
+			pstmt.setInt(++index, num);
+			pstmt.executeUpdate();
+
+			isSuccess = true;
+
+		} catch (SQLException e) { // TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null)
+					pstmt.close();
+				if (con != null)
+					con.close();
+
+			} catch (SQLException e) { // TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		return isSuccess;
+	}
+
+	// choice 변경
+	public boolean changechoice(int num, String email, int choice) {
+		boolean isSuccess = false;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			con = ConnLocator.getConnection();
+			StringBuffer sql = new StringBuffer();
+			sql.append("UPDATE rel_Help SET choice = ? ");
+			sql.append("WHERE num = ? and helper_email =? ");
+
+			pstmt = con.prepareStatement(sql.toString());
+			int index = 0;
+			pstmt.setInt(++index, choice);
+			pstmt.setInt(++index, num);
+			pstmt.setString(++index, email);
+			pstmt.executeUpdate();
+
+			isSuccess = true;
+
+		} catch (SQLException e) { // TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null)
+					pstmt.close();
+				if (con != null)
+					con.close();
+
+			} catch (SQLException e) { // TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		return isSuccess;
+	}
+  
+	// 진행중
+	public boolean changeiscom (int num,int iscom) {
+		boolean isSuccess = false;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			con = ConnLocator.getConnection();
+			StringBuffer sql = new StringBuffer();
+			sql.append("UPDATE List_Help SET iscomplete = ? ");
+			sql.append("WHERE num = ? and helper_max = 0 ");
+
+			pstmt = con.prepareStatement(sql.toString());
+			int index = 0;
+			pstmt.setInt(++index, iscom);
+			pstmt.setInt(++index, num);
+			pstmt.executeUpdate();
+
+			isSuccess = true;
+
+		} catch (SQLException e) { // TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null)
+					pstmt.close();
+				if (con != null)
+					con.close();
+
+			} catch (SQLException e) { // TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		return isSuccess;
+	}
+	// 미선택
+		public boolean changeiscomed (int num,int iscom) {
+			boolean isSuccess = false;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+
+			try {
+				con = ConnLocator.getConnection();
+				StringBuffer sql = new StringBuffer();
+				sql.append("UPDATE List_Help SET iscomplete = ? ");
+				sql.append("WHERE num = ? and helper_max != 0 ");
+
+				pstmt = con.prepareStatement(sql.toString());
+				int index = 0;
+				pstmt.setInt(++index, iscom);
+				pstmt.setInt(++index, num);
+				pstmt.executeUpdate();
+
+				isSuccess = true;
+
+			} catch (SQLException e) { // TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				try {
+					if (pstmt != null)
+						pstmt.close();
+					if (con != null)
+						con.close();
+
+				} catch (SQLException e) { // TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+			return isSuccess;
+		}
+	// 관계 추가
 	public boolean insert(ListHelpDto dto, String email) {
 		boolean isSuccess = false;
 

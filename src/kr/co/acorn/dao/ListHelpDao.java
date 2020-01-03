@@ -277,7 +277,7 @@ public class ListHelpDao {
 			sql.append(
 					"SELECT num, category, title, content, gender, iscomplete, helper_max, ask_addr, email, regdate ");
 			sql.append("FROM List_help ");
-			sql.append("WHERE iscomplete != 1 and email = ? ");
+			sql.append("WHERE iscomplete != 2 and email = ? ");
 			sql.append("ORDER BY regdate DESC ");
 			sql.append("LIMIT ?, ? ");//
 
